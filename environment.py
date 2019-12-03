@@ -5,6 +5,16 @@ from environment import BaseEnvironment
 
 class MountainEnvironment(BaseEnvironment):
 
+    def __init__(self):
+        self.min_position = None
+        self.max_position = None
+        self.min_velocity = None
+        self.max_velocity = None
+        self.gravity = None
+        self.start_position = None
+        self.start_velocity = None
+        self.action_dicount = None
+
     def env_init(self, env_info={}):
         '''
         Assume env_info dict conatins:
