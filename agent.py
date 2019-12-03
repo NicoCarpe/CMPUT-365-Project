@@ -3,49 +3,43 @@ from tiles3 import tiles, IHT
 from agent import BaseAgent
 
 
-class semi_gradient_ExpectedSarsa(BaseAgent):
-    def __init__(self):
-        self.min_position = None
-        self.max_position = None
-        self.min_velocity = None
-        self.max_velocity = None
-        self.numTilings = None
-        self.step_size = None
-        self.discount_factor = None
-        self.memorySize = None
-        self.epsilon = None
+class MountainCarTileCoder:
+    def __init__(self, iht_size, num_tilings, num_tiles):
+        '''
+        Initializes the MountainCar Tile Coder
+        iht_size -- int, the size of the index hash table, typically a power of 2
+        num_tilings -- int, the number of tillings
+        num_tiles -- int, the number of tiles. Both width and height of the tile coder are the same.
 
-    def agent_init(self, agent_info={}):
-        # set random seed for each run
-        self.rand_generator = np.random.RandomState(agent_info.get("seed"))
+        Class Variables:
+        self.iht -- IHT, the index hash table that the tile coder will use
+        self.num_tillings -- int, the number of tilings the tile coder will use
+        self.num_tiles -- int, the number of tiles the tile coder will use
+        '''
 
-        # set class attributes
-        # self.num_states = agent_info.get("num_states")
-        # self.num_groups = agent_info.get("num_groups")
-        self.min_position = agent_info("min_position")
-        self.max_position = agent_info("max_position")
-        self.min_velocity = agent_info("min_velocity")
-        self.max_velocity = agent_info("max_velocity")
+        self.iht = IHT(iht_size)
+        self.num_tilings = num_tilings
+        self.num_tiles = num_tiles
 
-        self.step_size = agent_info.get("step_size")
-        self.discount_factor = agent_info.get("discount_factor")
-        self.memorySize = agent_info.get("memorySize")
-        self.numTilings = agent_info.get("numTilings")
-        self.epsilon = agent_info.get("epsilon")
+    def get_tiles(self, position, velocity):
+        '''
+        Takes a position and velocity from the MountainCar Environment and returns a numpy array of active tiles.
 
-        self.size_of_tiling = self.numTilings * self.numTilings
-        self.alpha = 0.1 / self.numTilings
+        Arguments:
+        position -- float, the position of the agent between -1.2 and 0.5
+        velocity -- float, the velocity of the agent between -0.007 and 0.007
 
-        # self.all_state_fetures = np.array([])
+        returns -- np.array, active tiles
+        '''
+        # Set the max and min of position and velocity to scale the input
+        min_position = -1.2
+        max_position = 0.5
+        min_velocity = -0.07
+        max_velocity = 0.07
 
-        # initialize weights
-        self.weights = np.zeros(self.size_of_tiling)
-        for i in range(len(self.weights)):
-            self.weights[i] = np.random.uniform(-0.001, 0)
+        # Scale position and velocity
+        scale_position = self.num_tiles / (max_position - min_position)
+        scale_velocity = self.num_tiles / (max_velocity - min_velocity)
 
-    def get_fetures(self, position, velocity):
-        position_scale = self.numTilings / (self.max_position - self.min_position)
-        velocity_scale = self.numTilings / (self.max_velocity - self.min_velocity)
-        iht = IHT(self.memorySize)
-        return tiles(iht, self.numTilings, [velocity_scale * velocity, position_scale * position_scale])
-        
+        active_tiles = tiles(self.iht, self.num_tilings, [scale_position * position, scale_velocity * velocity])
+        return np.array(active_tiles)
