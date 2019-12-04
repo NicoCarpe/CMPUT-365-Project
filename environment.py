@@ -1,9 +1,9 @@
 import math
 import numpy as np
-from environment import BaseEnvironment
+# from environment import BaseEnvironment
 
 
-class MountainEnvironment(BaseEnvironment):
+class MountainEnvironment():
 
     def __init__(self):
         self.min_position = None
@@ -31,7 +31,7 @@ class MountainEnvironment(BaseEnvironment):
         }
         '''
         # set random seed for each run
-        self.rand_generator = np.random.RandomState(env_info.get("seed"))
+        # self.rand_generator = np.random.RandomState(env_info.get("seed"))
         
         # set each class attribute
         self.min_position = env_info["min_position"]
