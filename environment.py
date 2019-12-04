@@ -1,108 +1,70 @@
-import math
-import numpy as np
-# from environment import BaseEnvironment
+#!/usr/bin/env python
+
+"""Abstract environment base class for RL-Glue-py.
+"""
+
+from __future__ import print_function
+
+from abc import ABCMeta, abstractmethod
 
 
-class MountainEnvironment():
+class BaseEnvironment:
+    """Implements the environment for an RLGlue environment
+
+    Note:
+        env_init, env_start, env_step, env_cleanup, and env_message are required
+        methods.
+    """
+
+    __metaclass__ = ABCMeta
 
     def __init__(self):
-        self.min_position = None
-        self.max_position = None
-        self.min_velocity = None
-        self.max_velocity = None
-        self.gravity = None
-        self.start_position = None
-        self.start_velocity = None
-        self.action_dicount = None
-
-    def env_init(self, env_info={}):
-        '''
-        Assume env_info dict conatins:
-        {
-            min_posiiton: -1.2[int],
-            max_position: 0.5[int],
-            min_velocity: -0.07[int],
-            max_velosity: 0.07[int],
-            gravity: 0.0025[int],
-            start_position: np.random.sample[-0.6, -0.4] [int],
-            start_velosity: 0[int],
-            action_dicount: 0.001[int],
-            seed: [int]
-        }
-        '''
-        # set random seed for each run
-        # self.rand_generator = np.random.RandomState(env_info.get("seed"))
-        
-        # set each class attribute
-        self.min_position = env_info["min_position"]
-        self.max_position = env_info["max_position"]
-        self.min_velocity = env_info["min_velocity"]
-        self.max_velocity = env_info["max_velocity"]
-        self.gravity = env_info["gravity"]
-        self.start_position = env_info["start_position"]
-        self.start_velocity = env_info["start_velocity"]
-        self.action_dicount = env_info["action_dicount"]
-         
-    def env_start(self):
-        # set starting reward, position, and velocity
-        reward = 0.0
-        position = self.start_position
-        velocity = self.start_velocity
-        # set position and velocity to a tuple called state
-        state = (position, velocity)
-        # set is_terminal to False
-        is_terminal = False
-
+        reward = None
+        state = None
+        is_terminal = None
         self.reward_state_term = (reward, state, is_terminal)
 
-        return self.reward_state_term[1]
+    @abstractmethod
+    def env_init(self, env_info={}):
+        """Setup for the environment called when the experiment first starts.
 
-    def env_step(self, agent_action):
-        # set last_postion and last_velocity from self.reward_state_term
-        last_state = self.reward_state_term[1]
-        last_position = last_state[0]
-        last_velocity = last_state[1]
+        Note:
+            Initialize a tuple with the reward, first state observation, boolean
+            indicating if it's terminal.
+        """
 
-        # updated action
-        if agent_action == 0:
-            action = -1
-        elif agent_action == 1:
-            action = 0
-        elif agent_action == 2:
-            action = 1
+    @abstractmethod
+    def env_start(self):
+        """The first method called when the experiment starts, called before the
+        agent starts.
 
-        # updated velocity
-        velocity = last_velocity + self.action_dicount * action - self.gravity * math.cos(3 * last_position)
-        # checked if velocity is whithin envionment bounds
-        if velocity > self.max_velocity:
-            velocity = self.max_velocity
-        if velocity < self.min_velocity:
-            velocity = self.min_velocity
-        
-        # updated position
-        position = last_position + velocity
-        # checked position reached goal
-        if position >= self.max_position:
-            reward = -1
-            is_terminal = True
-        # checked position within environment bounds 
-        elif position < self.min_position:
-            # checked if velocity needs to be reset
-            if velocity < 0:
-                velocity = 0
-                position = self.min_position
-            else:
-                position = self.min_position
-            reward = -1
-            is_terminal = False
-        # position in bounds
-        else:
-            reward = -1
-            is_terminal = False
-        total_reward = self.reward_state_term[0]
-        total_reward += reward
-        # updated self.reward_state_term
-        state = (position, velocity)
-        self.reward_state_term = (total_reward, state, is_terminal)
+        Returns:
+            The first state observation from the environment.
+        """
 
-        return self.reward_state_term
+    @abstractmethod
+    def env_step(self, action):
+        """A step taken by the environment.
+
+        Args:
+            action: The action taken by the agent
+
+        Returns:
+            (float, state, Boolean): a tuple of the reward, state observation,
+                and boolean indicating if it's terminal.
+        """
+
+    @abstractmethod
+    def env_cleanup(self):
+        """Cleanup done after the environment ends"""
+
+    @abstractmethod
+    def env_message(self, message):
+        """A message asking the environment for information
+
+        Args:
+            message: the message passed to the environment
+
+        Returns:
+            the response (or answer) to the message
+        """
