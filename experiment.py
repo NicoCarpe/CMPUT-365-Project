@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import rlglue
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 def calc_RMSVE(learned_state_val):
     assert(len(true_state_val) == len(learned_state_val) == len(state_distribution))
     MSVE = np.sum(np.multiply(state_distribution, np.square(true_state_val - learned_state_val)))
@@ -77,6 +78,8 @@ def run_experiment(environment, agent, environment_parameters, agent_parameters,
             # save avg. rmsve
             np.save("results/RMSVE_{}".format(save_name), agent_rmsve)
 =======
+=======
+>>>>>>> 79179ac5c96c471932023e8ccb04eae8b153f677
 
 def run_experiment(num_runs, num_episodes, agent_info, env_info):
     all_steps = []
@@ -211,4 +214,7 @@ main()
 
 #             # save avg. rmsve
 #             np.save("results/RMSVE_{}".format(save_name), agent_rmsve)
+<<<<<<< HEAD
 >>>>>>> d01e6965c87313bd294849e08b38028485e239d9
+=======
+>>>>>>> 79179ac5c96c471932023e8ccb04eae8b153f677
