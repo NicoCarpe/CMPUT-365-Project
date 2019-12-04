@@ -57,11 +57,19 @@ class MountainEnvironment(BaseEnvironment):
 
         return self.reward_state_term[1]
 
-    def env_step(self, action):
+    def env_step(self, agent_action):
         # set last_postion and last_velocity from self.reward_state_term
         last_state = self.reward_state_term[1]
         last_position = last_state[0]
         last_velocity = last_state[1]
+
+        # updated action
+        if agent_action == 0:
+            action = -1
+        elif agent_action == 1:
+            action = 0
+        elif agent_action == 2:
+            action = 1
 
         # updated velocity
         velocity = last_velocity + self.action_dicount * action - self.gravity * math.cos(3 * last_position)
@@ -91,13 +99,10 @@ class MountainEnvironment(BaseEnvironment):
         else:
             reward = -1
             is_terminal = False
-        
+        total_reward = self.reward_state_term[0]
+        total_reward += reward
         # updated self.reward_state_term
         state = (position, velocity)
-        self.reward_state_term = (reward, state, is_terminal)
+        self.reward_state_term = (total_reward, state, is_terminal)
 
         return self.reward_state_term
-            
-
-        
-
