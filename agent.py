@@ -1,6 +1,6 @@
 import numpy as np
 from tiles3 import tiles, IHT
-from agent import BaseAgent
+# from agent import BaseAgent
 
 
 class MountainCarTileCoder:
@@ -45,7 +45,7 @@ class MountainCarTileCoder:
         return np.array(active_tiles)
 
 
-class ExpectedSarsaAgent(BaseAgent):
+class ExpectedSarsaAgent():
     
     def __init__(self):
         self.last_action = None
@@ -85,7 +85,7 @@ class ExpectedSarsaAgent(BaseAgent):
         for action in range(self.num_actions):
             value = 0
             for active_tile in tiles:
-                value += self.[action][active_tile]
+                value += self.w[action][active_tile]
             action_values.append(value)
 
         # Use epsilon greedy to select an action     
@@ -104,7 +104,7 @@ class ExpectedSarsaAgent(BaseAgent):
         current_action, action_value, action_values = self.select_action(active_tiles)
 
         self.last_action_value = action_value
-        # self.last_action_values = action_values
+        self.last_action_values = action_values
 
 
         self.last_action = current_action
@@ -145,4 +145,4 @@ class ExpectedSarsaAgent(BaseAgent):
     def agent_message(self, message):
         pass
 
-    
+
