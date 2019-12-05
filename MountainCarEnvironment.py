@@ -54,19 +54,19 @@ class MountainEnvironment(BaseEnvironment):
 
         return self.current_state
 
-    def env_step(self, agent_action):
+    def env_step(self, action):
         # set last_postion and last_velocity from self.reward_state_term
         last_position, last_velocity = self.current_state
         # updated action
-        if agent_action == 0:
-            action = -1
-        elif agent_action == 1:
-            action = 0
-        elif agent_action == 2:
-            action = 1
+        # if agent_action == 0:
+        #     action = -1
+        # elif agent_action == 1:
+        #     action = 0
+        # elif agent_action == 2:
+        #     action = 1
 
         # updated velocity
-        velocity = last_velocity + self.action_discount * action - self.gravity * np.cos(3 * last_position)
+        velocity = last_velocity + self.action_discount * (action - 1) - self.gravity * np.cos(3 * last_position)
         # checked if velocity is whithin envionment bounds
         if velocity > self.max_velocity:
             velocity = self.max_velocity
@@ -106,3 +106,17 @@ class MountainEnvironment(BaseEnvironment):
             return "{}".format(self.reward_state_term[0])
         else:
             return "No idea"
+
+    def bound_velocity(self, velocity):
+        if velocity > 0.07:
+            return 0.07
+        if velocity < -0.07:
+            return -0.07
+        return velocity
+
+    def bound_position(self, position):
+        if position > 0.5:
+            return 0.5
+        if position < -1.2:
+            return -1.2
+        return position

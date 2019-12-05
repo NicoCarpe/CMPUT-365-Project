@@ -75,9 +75,10 @@ class ExpectedSarsaAgent(BaseAgent):
 
         # Initialize self.w to num_actions times the iht_size. Because we need to have one set of weights for each action.
         self.w = np.ones((self.num_actions, self.iht_size)) * self.initial_weights
+        # print(self.w)
 
         # Initialize self.mctc to MountainCarTileCoder
-        self.mctc = MountainCarTileCoder(self.iht_size, self.num_tilings, self.num_tiles)
+        self.tc = MountainCarTileCoder(self.iht_size, self.num_tilings, self.num_tiles)
 
     def select_action(self, tiles):
         action_values = []
@@ -100,7 +101,7 @@ class ExpectedSarsaAgent(BaseAgent):
     def agent_start(self, state):
         position, velocity = state
 
-        active_tiles = self.mctc.get_tiles(position, velocity)
+        active_tiles = self.tc.get_tiles(position, velocity)
 
         current_action, action_value, action_values = self.select_action(active_tiles)
 
@@ -115,14 +116,14 @@ class ExpectedSarsaAgent(BaseAgent):
     def agent_step(self, reward, state):
         position, velocity = state
 
-        active_tiles = self.mctc.get_tiles(position, velocity)
+        active_tiles = self.tc.get_tiles(position, velocity)
         current_action, action_value, action_values = self.select_action(active_tiles)
         feature_vector = np.zeros(self.iht_size)
         for i in self.previous_tiles:
             feature_vector[i] = 1
         target = 0
         for action in range(self.num_actions):
-            if (action == argmax(action_values)):
+            if (action == np.argmax(action_values)):
                 policy = 1 - self.epsilon + (self.epsilon / self.num_actions)
             else:
                 policy = self.epsilon / self.num_actions
@@ -135,6 +136,7 @@ class ExpectedSarsaAgent(BaseAgent):
         return self.last_action
 
     def agent_end(self, reward):
+        # print("hello")
         feature_vector = np.zeros(self.iht_size)
         for i in self.previous_tiles:
             feature_vector[i] = 1
