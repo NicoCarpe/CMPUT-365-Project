@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """Glues together an experiment, agent, and environment.
 """
 
@@ -38,6 +36,9 @@ class RLGlue:
         Returns:
             tuple: (state, action)
         """
+        
+        self.total_reward = 0.0
+        self.num_steps = 1
 
         last_state = self.environment.env_start()
         self.last_action = self.agent.agent_start(last_state)
@@ -126,7 +127,7 @@ class RLGlue:
 
         (reward, last_state, term) = self.environment.env_step(self.last_action)
 
-        self.total_reward += reward
+        self.total_reward += reward;
 
         if term:
             self.num_episodes += 1
