@@ -1,4 +1,11 @@
 # Mountain-Car-Project
+Description:
+  This is an implementation of an Expected Sarsa Control algorithm, and tile coding function approximation. Our goal is for the agent to reach the top of the mountain in as few steps as possible.
+
+
+Link to Github Page:
+  https://github.com/NicoCarpe/Mountain-Car-Project.git
+
 
 Collaborators:
 
