@@ -1,4 +1,3 @@
-
 import numpy as np
 from environment import BaseEnvironment
 
@@ -27,8 +26,7 @@ class MountainEnvironment(BaseEnvironment):
             min_velocity: -0.07[int],
             max_velosity: 0.07[int],
             gravity: 0.0025[int],
-            action_discount: 0.001[int],
-            seed: [int]
+            action_discount: 0.001[int]
         }
         '''
         # set random seed for each run
@@ -57,13 +55,6 @@ class MountainEnvironment(BaseEnvironment):
     def env_step(self, action):
         # set last_postion and last_velocity from self.reward_state_term
         last_position, last_velocity = self.current_state
-        # updated action
-        # if agent_action == 0:
-        #     action = -1
-        # elif agent_action == 1:
-        #     action = 0
-        # elif agent_action == 2:
-        #     action = 1
 
         # updated velocity
         velocity = last_velocity + self.action_discount * (action - 1) - self.gravity * np.cos(3 * last_position)
@@ -79,7 +70,7 @@ class MountainEnvironment(BaseEnvironment):
         if position >= self.max_position:
             reward = -1
             is_terminal = True
-            # set current_state = None
+            self.current_state = None
         # checked position within environment bounds 
         elif position < self.min_position:
             # checked if velocity needs to be reset
@@ -102,21 +93,8 @@ class MountainEnvironment(BaseEnvironment):
         pass
 
     def env_message(self, message):
+        # return message
         if message == "What is the current reward?":
             return "{}".format(self.reward_state_term[0])
         else:
             return "No idea"
-
-    def bound_velocity(self, velocity):
-        if velocity > 0.07:
-            return 0.07
-        if velocity < -0.07:
-            return -0.07
-        return velocity
-
-    def bound_position(self, position):
-        if position > 0.5:
-            return 0.5
-        if position < -1.2:
-            return -1.2
-        return position
